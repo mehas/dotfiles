@@ -1,0 +1,166 @@
+# Fig pre block. Keep at the top of this file.
+[[ -f "$HOME/.fig/shell/zshrc.pre.zsh" ]] && . "$HOME/.fig/shell/zshrc.pre.zsh"
+#!/bin/sh
+
+# $PATH and other environment variables are loaded in ~/.profile
+source ~/.profile
+
+# Settings from Bash
+source ~/.bash_profile
+# echo \* $PATH | perl -pe 's/:/\n* /g'
+
+# Case insensitive globbing
+setopt NO_case_glob
+unsetopt CASE_GLOB
+setopt extendedglob
+
+# Terminal colors
+BLACK="\033[30m"
+RED="\033[31m"
+GREEN="\033[32m"
+BLUE="\033[34m"
+NORMAL="\033[0;39m"
+LOCAL_SERVER_DIR="mgnl-local"
+
+# Test staged vanity URLs on the WWW Legacy Backend
+function testVanityUrl() {
+	ENV='stg'
+	if [ -n "$2" ]; then
+		ENV='prd'
+	fi
+
+	# Test URL
+	URL='https://wf-legacy-www.'
+	URL+=$ENV
+	URL+='.oma1.nyt.net/'
+	URL+=$1
+
+	# Terminal command
+	COMMAND=''
+	COMMAND+='curl -s '
+	COMMAND+='-D - '
+	COMMAND+='-o '
+	COMMAND+='--stderr '
+	COMMAND+='-I '
+	COMMAND+=$URL
+	COMMAND+=" -H 'host: www.nytimes.com' "
+
+	COMMAND+="| "
+
+	LOCATION_FILTER="grep '^location:' "
+	STATUS_CODE_FILTER="grep '^HTTP:' "
+
+	STATUS_CODE_COMMAND="$COMMAND"
+
+	STATUS_CODE_COMMAND+="grep '^HTTP' "
+
+	COMMAND+=$LOCATION_FILTER
+
+	echo
+	echo $BLUE"Testing the URL $GREEN/$1$BLUE in the $GREEN$ENV$BLUE environment ($NORMAL$URL$BLUE)"$NORMAL
+	eval $COMMAND
+	eval $STATUS_CODE_COMMAND
+	echo
+}
+
+# Debug
+echo '\n== $PATH contents: =============================='
+echo \*' '${PATH//:/\\n*' '}
+echo '\n================================================='
+
+# Command Prompt format
+NEWLINE=$'\n'
+DATE=$(date +"[%Y-%m-%d %H:%M:%S]")
+PROMPT="${NEWLINE}%(!.%F{red}.%F{white})%F{yellow}%d %n%F{cyan}@%m ${NEWLINE}%F{reset}► "
+PROMPT="${NEWLINE}%(!.%F{red}.%F{white})%F{yellow}%d ${NEWLINE}%F{reset}► "
+
+# NVM
+[ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"                   # This loads nvm
+# [ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion" # This loads nvm bash_completion
+
+# Prevent duplicate PATH variables
+typeset -U PATH
+
+# Aliases
+# ========
+
+# Shortcuts
+# ---------
+
+# VS Code
+alias -s {js,json,md,txt,jsx,css,ts,html,gitignore,gitignore_global}=code
+
+# exa
+alias exa='exa -l --icons --no-permissions --no-user'
+
+alias ls='ls -lAgGHhF | grep "^d" && ls -la | grep -v "^d" | grep -v .DS_Store | cut -c12-'
+alias sz='echo "Reloading shell config changes..." && exec zsh -l'
+alias ys='yarn start'
+alias yb='yarn build'
+# alias creact='npx create-react-app "$@"'
+
+# Git
+# alias gitpom='git push origin master'
+# alias gita='git add .'
+# alias gitc='git commit -m "$@"'
+# alias git-new-hash= 'git commit --allow-empty -m "re-trigger build"'
+# alias -s git="git clone"
+
+# Debounce keyboard chatter
+# alias nochatter='sudo ~/Downloads/debounce'
+
+# Magnolia WCM
+# ------------
+# WCM Templates
+#alias cd-wcm-templates='echo "\n🐙 Git repo:$GREEN WCM Templates$NORMAL" && cd ~/dev/$LOCAL_SERVER_DIR/mkt-wcm-templates/mkt-wcm/ && echo "$BLUE" && pwd && echo "$NORMAL"'
+# alias cdt=cd-wcm-templates
+
+#WCM Core
+# alias cd-wcm-core='echo "\n🐙 Git repo: $GREENWCM Core" && cd ~/dev/$LOCAL_SERVER_DIR/mkt-wcm-core/ && pwd && echo "\n"'
+# alias cdc=cd-wcm-core
+
+
+# WCM Webapp
+# alias cd-wcm-app='echo "\nWCM Webapp" && cd ~/dev/$LOCAL_SERVER_DIR/mkt-wcm-core/mkt-wcm-core-webapp/ && pwd && echo "\n"'
+# alias cda=cd-wcm-app
+
+# WCM Custom Config
+# alias cd-wcm-config='echo "\nWCM Custom Config" && cd ~/dev/mkt-wcm-config/ && pwd && echo "\n"'
+# alias cdcon=cd-wcm-config
+
+# WCM Docker
+# alias cd-wcm-docker='cd ~/dev/$LOCAL_SERVER_DIR/docker/ && pwd'
+# alias local-status='curl http://127.0.0.1:8080/local/.status'
+
+# Local repos
+# ------------
+# Dev directory
+alias cdd='cd ~/dev/ && pwd && echo "\n" && exa'
+alias cdcom='cd ~/dev/standalone/packages/components/ && pwd && echo "\n" && exa'
+alias cds='cd ~/dev/standalone/ && pwd && echo "\n" && exa'
+alias cdsp='cd ~/dev/standalone/packages/ && pwd && echo "\n" && exa'
+alias cdsc='cd ~/dev/standalone/packages/cooking/ && pwd && echo "\n" && exa'
+alias cdsg='cd ~/dev/standalone/packages/games/ && pwd && echo "\n" && exa'
+alias cdrt='cd ~/dev/react-workshop/ && pwd && echo "\n" && exa'
+
+# Repo: The Truth Takes a Journalist
+# alias cdtruth='echo "\n🐙 Git repo: $GREENThe Truth Takes a Journalist" && cd ~/dev/truth-take-a-journalist/ && pwd && echo "\n"'
+
+# Repo: Independent Journalism
+alias cdij='echo "\n🐙 Git repo: $GREENIndependent Journalism" && cd ~/dev/independent-journalism/ && pwd && echo "\n" && exa'
+
+# Repo: Games Subscription LP
+alias cdg='echo "\n🐙 Git repo:$GREEN Games Subscription LP$NORMAL" && cd ~/dev/games-subscription/ && pwd && echo "\n" && exa'
+
+# Repo: Cooking Subscription LP
+alias cdc='echo "\n🐙 Git repo:$GREEN Cooking Subscription LP$NORMAL" && cd ~/dev/cooking-subscription/ && pwd && echo "\n" && exa'
+# Magnolia: Start local Magnolia instance
+# alias magnolia-init='cd ~/dev/$LOCAL_SERVER_DIR/ && pwd && zsh go.sh'
+# alias make-rocket-go-now=magnolia-init
+
+# bit
+export PATH="$PATH:/Users/ethanmehas/bin"
+# bit end
+
+# Fig post block. Keep at the bottom of this file.
+[[ -f "$HOME/.fig/shell/zshrc.post.zsh" ]] && . "$HOME/.fig/shell/zshrc.post.zsh"

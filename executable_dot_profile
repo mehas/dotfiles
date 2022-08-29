@@ -1,0 +1,27 @@
+# Fig pre block. Keep at the top of this file.
+[[ -f "$HOME/.fig/shell/profile.pre.bash" ]] && . "$HOME/.fig/shell/profile.pre.bash"
+# export EDITOR="code -w"
+export LSCOLORS="exgxbxbxcxegedabagacad"
+export VAULT_ADDR="https://vault-prd.dv.nyt.net"
+# Node
+# export PATH="$PATH:$NVM_DIR/versions/node/v12.13.1/bin"
+export NVM_DIR="$HOME/.nvm"
+# Java
+# export JAVA_HOME="/Library/Java/JavaVirtualMachines/jdk1.8.0_191.jdk/Contents/Home"
+export JAVA_HOME="/Library/java/JavaVirtualMachines/jdk-11.0.8.jdk/Contents/Home"
+# Go
+export PATH="$PATH:$GOPATH/bin:$GOROOT/bin"
+export GOPATH="$HOME/go-workspace"
+export GOROOT="/usr/local/opt/go/libexec"
+# Docker
+export PATH="/usr/local/Cellar/docker/18.09.3/bin:$PATH"
+# Groovy
+export PATH="/usr/local/Cellar/groovy/2.5.6/bin:$PATH"
+# Maven
+export PATH="/usr/local/Cellar/maven/3.6.1/bin:$PATH"
+# Tomcat
+export PATH="/usr/local/Cellar/tomcat/9.0.16/bin:$PATH"
+typeset -U PATH
+
+# Fig post block. Keep at the bottom of this file.
+[[ -f "$HOME/.fig/shell/profile.post.bash" ]] && . "$HOME/.fig/shell/profile.post.bash"
